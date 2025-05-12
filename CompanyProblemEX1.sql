@@ -2,10 +2,10 @@ CREATE DATABASE db_firmaProdutosLimpeza;
 USE db_firmaProdutosLimpeza;
 
 CREATE TABLE categorias(
-	id INT PRIMARY KEY AUTO_INCREMENT,
-    nome varchar(50)
+	id INT PRIMARY KEY AUTO_INCREMENT UNIQUE,
+    nome VARCHAR(50) NOT NULL UNIQUE
 );
-
+ 
 INSERT INTO categorias(
 	nome
 ) 
@@ -16,15 +16,24 @@ VALUES
 ('Amaciante'),
 ('Cloro');
 
-SELECT * FROM categorias;
-
 CREATE TABLE endereco(
 	id INT PRIMARY KEY AUTO_INCREMENT,
-	logradouro VARCHAR(100),
-    CEP VARCHAR(8),
-    numero INT,
-    bairro VARCHAR(100),
-    cidade VARCHAR(50)
+	logradouro VARCHAR(100) NOT NULL,
+    CEP VARCHAR(8) NOT NULL,
+    numero INT NOT NULL,
+    bairro VARCHAR(100) NOT NULL,
+    cidade VARCHAR(50) NOT NULL,
+    
+    CONSTRAINT checar_cidade CHECK (cidade = 'São Paulo' OR cidade = 'Rio de Janeiro' 
+    OR cidade = 'Belo Horizonte' OR cidade = 'Porto Alegre' OR cidade = 'Curitiba'
+    OR cidade = 'Brasília' OR cidade = 'Salvador' OR cidade = 'Manaus' OR cidade = 'Fortaleza'
+    OR cidade = 'Recife'),
+    
+    CONSTRAINT checar_bairro CHECK (bairro = 'Jardim Alegre' OR bairro = 'Centro' OR 
+    bairro = 'Boa Vista' OR bairro = 'Vila Nova' 
+    OR bairro = 'Floresta' OR bairro = 'Independência'
+	OR bairro = 'Liberdade' OR bairro = 'Campo Belo' OR bairro = 'Praia Grande' OR bairro = 'Campo Belo'
+    OR bairro = 'União')
 );
 
 INSERT INTO endereco(
@@ -41,14 +50,13 @@ INSERT INTO endereco(
 ('Rua dos Cravos', '44556677', 555, 'Campo Belo', 'Manaus'),
 ('Avenida das Palmeiras', '88990011', 666, 'União', 'Recife');
 
-SELECT * FROM endereco;
-
 CREATE TABLE clientes(
 	id INT PRIMARY KEY AUTO_INCREMENT,
-    telefone VARCHAR(12),
-    nome VARCHAR(100),
-    limite FLOAT,
-    id_endereco INT, FOREIGN KEY (id_endereco) REFERENCES endereco(id)
+    telefone VARCHAR(12) NOT NULL,
+    nome VARCHAR(100) NOT NULL,
+    limite FLOAT NOT NULL DEFAULT 1000.00,
+    id_endereco INT, 
+    FOREIGN KEY (id_endereco) REFERENCES endereco(id)
 );
 
 INSERT INTO clientes(
@@ -65,12 +73,11 @@ INSERT INTO clientes(
 ('91933221100', 'Juliana Gomes', 1100.25, 9),
 ('27922110099', 'Bruno Rodrigues', 2200, 10);
 
-SELECT * FROM clientes;
-
 CREATE TABLE pedido(
 	numero INT PRIMARY KEY AUTO_INCREMENT,
-    data_elaboracao Date,
-    id_cliente INT, FOREIGN KEY (id_cliente) REFERENCES clientes(id)
+    data_elaboracao DATE NOT NULL,
+    id_cliente INT, 
+    FOREIGN KEY (id_cliente) REFERENCES clientes(id)
 );
 
 INSERT INTO pedido(
@@ -107,12 +114,10 @@ INSERT INTO pedido(
 ('2025-04-29', 8),
 ('2025-04-29', 9);
 
-SELECT * FROM pedido;
-
 CREATE TABLE produtos(
 	codigo INT PRIMARY KEY AUTO_INCREMENT,
     nome VARCHAR(100),
-    preco FLOAT,
+    preco FLOAT NOT NULL,
     id_categoria INT, FOREIGN KEY (id_categoria) REFERENCES categorias(id)
 );
 
@@ -130,13 +135,13 @@ INSERT INTO produtos(
 ('Limpa Banheiro Gel', 10.30, 4),
 ('Lustra Móveis Perfumado', 7.60, 1);
 
-SELECT * FROM produtos;
-
 CREATE TABLE produto_pedido(
 	id INT PRIMARY KEY AUTO_INCREMENT,
-    id_pedido INT, FOREIGN KEY (id_pedido) REFERENCES pedido(numero),
-    id_produto INT, FOREIGN KEY (id_produto) REFERENCES produtos(codigo),
-    quantidade INT
+    id_pedido INT, 
+    FOREIGN KEY (id_pedido) REFERENCES pedido(numero),
+    id_produto INT, 
+    FOREIGN KEY (id_produto) REFERENCES produtos(codigo),
+    quantidade INT NOT NULL
 );
 
 INSERT INTO produto_pedido(
@@ -173,10 +178,11 @@ INSERT INTO produto_pedido(
 (18, 10, 1),
 (19, 4, 3);
 
+-- Consultas realizadas:
+
 SELECT * FROM categorias;
 SELECT * FROM clientes;
 SELECT * FROM endereco;
 SELECT * FROM pedido;
-SELECT * FROM categorias;
 SELECT * FROM produtos;
 SELECT * FROM produto_pedido;

@@ -11,6 +11,7 @@
 * *Consultas com filtros de registros.*
 * *Consultas com ordenação de registros.*
 * *Agregação de registros em uma consulta.*
+* *Normalização de banco de dados.*
 
 ### - Fundamentos básicos de tabelas, colunas, inserção de dados, etc.
 * *Criação de tabelas.*
